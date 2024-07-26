@@ -10,6 +10,9 @@ from openai import OpenAI
 import functions
 from dotenv import load_dotenv
 import base64
+from db_connections import get_db
+
+
 
 load_dotenv()
 # Check OpenAI version compatibility
@@ -20,6 +23,22 @@ CORS(app)
 required_version = version.parse("1.1.1")
 current_version = version.parse(openai.__version__)
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY'].rstrip()
+
+
+db = get_db()
+chat_collection = db['chat_sessions']
+
+
+
+
+
+
+
+
+
+
+
+
 if current_version < required_version:
     raise ValueError(
         f"Error: OpenAI version {openai.__version__} is less than the required version 1.1.1"
@@ -64,11 +83,6 @@ def index():
 def download_audio():
     # Endpoint to download the generated audio file
     return send_file("output.mp3", mimetype='audio/mpeg', as_attachment=True, download_name='response.mp3')
-
-
-
-
-
 
 
 
@@ -185,9 +199,25 @@ def chat():
         'text': response_text,
         'audio': audio_base64
     }
-    print("data",response)
+    # print("data",response)
     return jsonify(response)
     # return send_file(audio_file_path, mimetype='audio/mpeg', as_attachment=True, download_name='response.mp3')
+
+
+
+
+
+@app.route('/store_chat', methods=['POST'])
+def store_chat():
+    chat_data = request.json
+    print("chat data ",chat_data)
+    chat_id = chat_data['chat_id']  
+    chat_collection.insert_one(chat_data)
+    return jsonify({'status': 'Chat session stored successfully'}), 201
+
+
+
+
 
 if __name__ == '__main__':
      app.run(host='0.0.0.0', port=int(os.getenv("PORT", 3001)))

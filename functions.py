@@ -32,7 +32,7 @@ def create_assistant(client):
         
         assistant = client.beta.assistants.create(
             instructions=assistant_instructions,
-            model="gpt-4-turbo",  # Use GPT-4 model
+            model="gpt-3.5-turbo",  # Use GPT-4 model
             tools=[
                 {
                     "type": "retrieval"  # Adds the knowledge base as a tool
