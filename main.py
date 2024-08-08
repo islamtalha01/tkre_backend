@@ -3,7 +3,7 @@
 import json
 import os
 import time
-from flask import Flask, request, jsonify,send_file
+from flask import Flask, request, jsonify,send_file,redirect
 from flask_cors import CORS
 import openai
 from openai import OpenAI
@@ -26,9 +26,10 @@ OPENAI_API_KEY = os.environ['OPENAI_API_KEY'].rstrip()
 
 
 db = get_db()
-chat_collection = db['chat_sessions']
 
 
+chat_collection = db['chats']
+clicks_collection = db['clicks']
 
 
 
@@ -51,6 +52,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Create or load assistant
 assistant_id = functions.create_assistant(client)
+
 
 # Start conversation thread
 @app.route('/start', methods=['GET'])
@@ -205,6 +207,25 @@ def chat():
 
 
 
+
+@app.route('/redirect', methods=['GET'])
+def redirect_to_calendly():
+    calendly_url = request.args.get('calendly_url')
+
+    # calendly_url = "your_unique_calendly_url"
+    # print ("unique url: ", calendly_url)
+    # Increment the click count
+
+  
+    
+    clicks_collection.insert_one({
+    "calendly_url": calendly_url,
+    "count": 1
+     })
+
+
+    # Redirect to the actual Calendly URL
+    return redirect(calendly_url)
 
 
 @app.route('/store_chat', methods=['POST'])

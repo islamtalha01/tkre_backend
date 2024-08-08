@@ -14,5 +14,7 @@ uri = "mongodb+srv://islamtalha01:talha4655@cluster0.i5qr0eq.mongodb.net/?retryW
 
 def get_db():
    client = MongoClient(uri, server_api=ServerApi('1'))
-   db = client['chat_db']
+   db = client['analytics']
    return db
+
+   

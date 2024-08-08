@@ -30,8 +30,9 @@ def create_assistant(client):
         # print("File of knowledge uploaded:", file)
         
         assistant = client.beta.assistants.create(
+              name="Real_Estate_GPT",
             instructions=assistant_instructions,
-            model="gpt-3.5-turbo",  # Use GPT-4 model
+            model="gpt-4",  # Use GPT-4 model
             tools=[
                 {
                     "type": "retrieval"  # Adds the knowledge base as a tool
